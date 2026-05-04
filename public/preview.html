@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sumiko — App Preview</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f172a;color:#0f172a;padding:24px 16px;min-height:100vh}
+  h1.page-title{color:#fff;font-size:28px;font-weight:900;text-align:center;letter-spacing:-0.5px;margin-bottom:4px}
+  p.page-sub{color:#94a3b8;text-align:center;font-size:14px;margin-bottom:36px}
+  .screens{display:flex;flex-direction:column;gap:48px;max-width:480px;margin:0 auto}
+  .screen-label{color:#f97316;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;padding-left:2px}
+  .screen{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.5);border:1px solid #1e293b}
+
+  /* ── SHARED COMPONENTS ── */
+  .nav{background:#0a0f1e;display:flex;align-items:center;justify-content:space-between;padding:14px 20px}
+  .logo{display:flex;align-items:center;gap:8px}
+  .logo-icon{width:28px;height:28px;background:#f97316;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px}
+  .logo-text{color:#fff;font-weight:800;font-size:16px;letter-spacing:-0.3px}
+  .nav-links{display:flex;gap:20px}
+  .nav-link{color:#94a3b8;font-size:12px;font-weight:500;text-decoration:none}
+  .nav-btns{display:flex;gap:8px}
+  .btn-ghost{color:#cbd5e1;font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px;border:1px solid #334155;background:transparent}
+  .btn-orange{background:#f97316;color:#fff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;border:none}
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font-size:10px;font-weight:600}
+  .badge-dot{width:5px;height:5px;border-radius:50%}
+  .badge-transit{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa}.badge-transit .badge-dot{background:#f97316}
+  .badge-delivered{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}.badge-delivered .badge-dot{background:#22c55e}
+  .badge-posted{background:#fffbeb;color:#b45309;border:1px solid #fde68a}.badge-posted .badge-dot{background:#f59e0b}
+  .badge-assigned{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}.badge-assigned .badge-dot{background:#3b82f6}
+  .badge-cancelled{background:#f8fafc;color:#64748b;border:1px solid #e2e8f0}.badge-cancelled .badge-dot{background:#94a3b8}
+  .stat-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px}
+  .stat-label{font-size:11px;color:#94a3b8;font-weight:500;margin-bottom:4px}
+  .stat-value{font-size:22px;font-weight:900;color:#0f172a;letter-spacing:-0.5px}
+  .stat-sub{font-size:10px;color:#94a3b8;margin-top:2px}
+  .stat-trend{font-size:10px;font-weight:700;margin-top:6px}
+  .trend-up{color:#16a34a}.trend-down{color:#dc2626}
+  .stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px}
+  .icon-orange{background:#fff7ed}.icon-green{background:#f0fdf4}.icon-blue{background:#eff6ff}.icon-purple{background:#faf5ff}
+  .card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px}
+  .card-title{font-size:13px;font-weight:700;color:#0f172a;margin-bottom:2px}
+  .card-sub{font-size:11px;color:#94a3b8;margin-bottom:14px}
+
+  /* ── SIDEBAR LAYOUT ── */
+  .dash-wrap{display:flex;height:100%}
+  .sidebar{width:72px;background:#0a0f1e;padding:14px 0;display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0}
+  .sb-logo{width:32px;height:32px;background:#f97316;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:12px}
+  .sb-item{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer}
+  .sb-active{background:rgba(249,115,22,0.15)}
+  .sb-role{font-size:7px;color:#f97316;font-weight:700;text-transform:uppercase;letter-spacing:1px;writing-mode:vertical-rl;transform:rotate(180deg);margin-top:auto;margin-bottom:8px;opacity:0.8}
+  .main-area{flex:1;background:#f8fafc;overflow:hidden}
+  .topbar{background:#fff;border-bottom:1px solid #e2e8f0;padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+  .topbar-search{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:6px 10px;font-size:11px;color:#94a3b8;flex:1;max-width:200px}
+  .topbar-right{display:flex;align-items:center;gap:8px}
+  .avatar{width:28px;height:28px;background:#f97316;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700}
+  .notif{position:relative;width:28px;height:28px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .notif-dot{position:absolute;top:4px;right:4px;width:6px;height:6px;background:#f97316;border-radius:50%}
+  .page-content{padding:16px;overflow-y:auto}
+
+  /* ── BAR CHART ── */
+  .bar-chart{display:flex;align-items:flex-end;gap:6px;height:80px;margin-top:8px}
+  .bar-col{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
+  .bar{background:#f97316;border-radius:4px 4px 0 0;width:100%;min-height:4px}
+  .bar-label{font-size:8px;color:#94a3b8;font-weight:500}
+  .bar-green{background:#10b981}
+  .bar-blue{background:#3b82f6}
+
+  /* ── LINE CHART ── */
+  .line-chart{position:relative;height:70px;margin-top:8px}
+  .line-chart svg{width:100%;height:100%}
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap{background:#e2e8f0;border-radius:99px;height:6px;overflow:hidden}
+  .progress-fill{height:100%;background:#f97316;border-radius:99px}
+  .progress-fill-green{background:#10b981}
+
+  /* ── TABLE ── */
+  .table{width:100%;border-collapse:collapse}
+  .th{font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;padding:8px 10px;text-align:left;border-bottom:1px solid #f1f5f9;background:#f8fafc}
+  .td{font-size:11px;color:#374151;padding:8px 10px;border-bottom:1px solid #f8fafc}
+  .td-bold{font-weight:700;color:#0f172a}
+  .td-orange{color:#f97316;font-weight:700}
+  .td-sub{font-size:9px;color:#94a3b8;margin-top:1px}
+
+  /* ── ROUTE DISPLAY ── */
+  .route{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#0f172a}
+  .route-arrow{color:#94a3b8;font-size:10px}
+
+  /* ── LOAD CARD ── */
+  .load-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:8px}
+  .load-card-active{background:#fff7ed;border-color:#fed7aa}
+
+  /* ── PIE CHART ── */
+  .pie-legend{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+  .pie-item{display:flex;align-items:center;justify-content:space-between;font-size:11px}
+  .pie-dot{width:8px;height:8px;border-radius:50%;margin-right:6px;flex-shrink:0}
+
+  /* ── TRUCK CARD ── */
+  .truck-card{background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:8px}
+  .truck-card-maintenance{border-color:#fcd34d;background:#fffbeb}
+
+  /* ── USER ROW ── */
+  .user-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f8fafc}
+  .user-avatar{width:32px;height:32px;border-radius:50%;background:#f97316;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+  .user-name{font-size:12px;font-weight:600;color:#0f172a}
+  .user-email{font-size:10px;color:#94a3b8}
+  .verified{color:#16a34a;font-size:10px;font-weight:600}
+  .pending-v{color:#d97706;font-size:10px;font-weight:600}
+
+  /* ── HERO ── */
+  .hero{background:linear-gradient(135deg,#0a0f1e 0%,#0f1a2e 60%,#0a1528 100%);padding:32px 20px}
+  .hero-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(249,115,22,0.15);border:1px solid rgba(249,115,22,0.3);border-radius:99px;padding:4px 12px;font-size:10px;color:#fb923c;font-weight:600;margin-bottom:16px}
+  .hero-h1{color:#fff;font-size:26px;font-weight:900;line-height:1.1;letter-spacing:-0.5px;margin-bottom:12px}
+  .hero-orange{background:linear-gradient(135deg,#f97316,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .hero-sub{color:#94a3b8;font-size:13px;line-height:1.6;margin-bottom:20px}
+  .hero-btns{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+  .hero-btn-primary{background:#f97316;color:#fff;font-size:12px;font-weight:700;padding:10px 18px;border-radius:10px;border:none;display:inline-flex;align-items:center;gap:6px}
+  .hero-btn-secondary{background:rgba(255,255,255,0.1);color:#fff;font-size:12px;font-weight:600;padding:10px 18px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);display:inline-flex;align-items:center;gap:6px}
+  .hero-checks{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px}
+  .hero-check{display:flex;align-items:center;gap:5px;font-size:10px;color:#94a3b8}
+  .check-icon{color:#34d399;font-size:11px}
+  .hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .hero-stat{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px}
+  .hero-stat-val{color:#fff;font-size:18px;font-weight:900;letter-spacing:-0.5px}
+  .hero-stat-label{color:#64748b;font-size:10px;margin-top:2px;font-weight:500}
+
+  /* ── LOGIN ── */
+  .login-wrap{display:flex;flex-direction:column}
+  .login-top{background:#0a0f1e;padding:24px 20px}
+  .login-body{background:#f8fafc;padding:20px}
+  .role-card{background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+  .role-card-active{border-color:#f97316;background:#fff7ed}
+  .role-icon-wrap{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .role-title{font-size:13px;font-weight:700;color:#0f172a}
+  .role-desc{font-size:10px;color:#94a3b8;margin-top:1px}
+  .role-demo{font-size:9px;color:#94a3b8;margin-top:5px;padding-top:5px;border-top:1px solid #f1f5f9}
+  .role-arrow{margin-left:auto;color:#f97316;font-weight:700;font-size:13px;flex-shrink:0}
+
+  /* ── STEP FORM ── */
+  .step-wrap{display:flex;align-items:center;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+  .step{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:10px;font-weight:700}
+  .step-active{background:#f97316;color:#fff}
+  .step-done{background:#dcfce7;color:#166534}
+  .step-pending{background:#f1f5f9;color:#94a3b8}
+  .step-arrow{color:#d1d5db;font-size:10px}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+  .form-group{margin-bottom:10px}
+  .form-label{font-size:10px;font-weight:600;color:#374151;margin-bottom:4px;display:block}
+  .form-input{width:100%;border:1px solid #d1d5db;border-radius:8px;padding:8px 10px;font-size:11px;color:#0f172a;background:#fff}
+  .form-select{width:100%;border:1px solid #d1d5db;border-radius:8px;padding:8px 10px;font-size:11px;color:#0f172a;background:#fff;appearance:none}
+
+  /* ── TRACKING ── */
+  .track-map{background:linear-gradient(135deg,#e2e8f0,#f1f5f9);border-radius:12px;padding:20px;position:relative;margin-bottom:12px;min-height:120px;display:flex;align-items:center;justify-content:center}
+  .track-route{display:flex;align-items:center;gap:0;width:100%;max-width:280px;position:relative}
+  .track-dot-green{width:12px;height:12px;background:#22c55e;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 3px rgba(34,197,94,0.2)}
+  .track-dot-grey{width:12px;height:12px;background:#94a3b8;border-radius:50%;flex-shrink:0}
+  .track-line{flex:1;height:2px;background:#cbd5e1;position:relative}
+  .track-truck{position:absolute;top:50%;transform:translateY(-50%);left:58%;background:#f97316;color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 2px 8px rgba(249,115,22,0.4)}
+  .track-city{font-size:9px;font-weight:700;color:#374151;margin-top:5px;text-align:center}
+  .timeline-item{display:flex;gap:10px;margin-bottom:10px}
+  .tl-dot{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px}
+  .tl-done{background:#22c55e;color:#fff}
+  .tl-active{background:#f97316;color:#fff;box-shadow:0 0 0 3px rgba(249,115,22,0.2)}
+  .tl-pending{background:#e2e8f0}
+  .tl-line{width:1px;background:#e2e8f0;margin:2px auto 0;height:14px}
+  .tl-text{font-size:11px;color:#374151;font-weight:500}
+  .tl-sub{font-size:9px;color:#94a3b8;margin-top:1px}
+
+  /* ── AVAILABLE LOAD ── */
+  .avail-card{background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:8px}
+  .avail-card:first-child{border-color:#f97316;background:#fff7ed}
+  .avail-price{font-size:18px;font-weight:900;color:#0f172a;letter-spacing:-0.5px}
+  .accept-btn{background:#f97316;color:#fff;border:none;border-radius:9px;padding:8px 14px;font-size:11px;font-weight:700;cursor:pointer}
+
+  /* ── FLEET ── */
+  .truck-status-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+  .ts-card{border-radius:10px;padding:10px;border:1px solid}
+  .ts-on{background:#fff7ed;border-color:#fed7aa}.ts-avail{background:#f0fdf4;border-color:#bbf7d0}
+  .ts-maint{background:#fffbeb;border-color:#fde68a}.ts-off{background:#f8fafc;border-color:#e2e8f0}
+  .ts-count{font-size:20px;font-weight:900;margin-bottom:2px}
+  .ts-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+  .ts-on .ts-count{color:#c2410c}.ts-on .ts-label{color:#ea580c}
+  .ts-avail .ts-count{color:#15803d}.ts-avail .ts-label{color:#16a34a}
+  .ts-maint .ts-count{color:#b45309}.ts-maint .ts-label{color:#d97706}
+  .ts-off .ts-count{color:#475569}.ts-off .ts-label{color:#64748b}
+
+  /* ── ADMIN ── */
+  .activity-item{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid #f8fafc}
+  .act-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+  .act-success{background:#dcfce7}.act-info{background:#dbeafe}.act-warning{background:#fef9c3}
+  .act-text{font-size:11px;color:#374151;line-height:1.4}
+  .act-time{font-size:9px;color:#94a3b8;margin-top:2px}
+  .route-bar-row{margin-bottom:10px}
+  .route-bar-label{display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px}
+  .route-bar-name{font-weight:600;color:#374151}
+  .route-bar-trend{font-weight:700}
+  .trend-pos{color:#16a34a}.trend-neg{color:#dc2626}
+  .route-bar-track{background:#f1f5f9;border-radius:99px;height:5px;overflow:hidden}
+  .route-bar-fill{height:100%;background:#f97316;border-radius:99px}
+  .route-bar-meta{display:flex;justify-content:space-between;font-size:9px;color:#94a3b8;margin-top:2px}
+</style>
+</head>
+<body>
+
+<h1 class="page-title">Sumiko — Full App Preview</h1>
+<p class="page-sub">Every screen, exactly as built. Open on any device.</p>
+
+<div class="screens">
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 1. LANDING PAGE -->
+<!-- ══════════════════════════════════════════ -->
+<div>
+  <div class="screen-label">① Landing Page</div>
+  <div class="screen">
+    <!-- Nav -->
+    <div class="nav">
+      <div class="logo">
+        <div class="logo-icon">🚛</div>
+        <div class="logo-text">Sumiko</div>
+      </div>
+      <div class="nav-btns">
+        <div class="btn-ghost">Log in</div>
+        <div class="btn-orange">Get Started</div>
+      </div>
+    </div>
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-pill">🌍 Zimbabwe &amp; South Africa's #1 Freight Platform</div>
+      <div class="hero-h1">Africa's Freight<br>Network, <span class="hero-orange">Reimagined.</span></div>
+      <div class="hero-sub">Connect with verified carriers, track shipments in real-time, and move your goods across Zimbabwe and South Africa with speed and confidence.</div>
+      <div class="hero-btns">
+        <div class="hero-btn-primary">Start Shipping Now →</div>
+        <div class="hero-btn-secondary">🚛 Join as Carrier</div>
+      </div>
+      <div class="hero-checks">
+        <div class="hero-check"><span class="check-icon">✓</span> No signup fee</div>
+        <div class="hero-check"><span class="check-icon">✓</span> Verified carriers</div>
+        <div class="hero-check"><span class="check-icon">✓</span> Real-time tracking</div>
+        <div class="hero-check"><span class="check-icon">✓</span> 24/7 support</div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hero-stat-val">12,500+</div><div class="hero-stat-label">Loads Moved</div></div>
+        <div class="hero-stat"><div class="hero-stat-val">2,800+</div><div class="hero-stat-label">Verified Carriers</div></div>
+        <div class="hero-stat"><div class="hero-stat-val">98.2%</div><div class="hero-stat-label">On-Time Delivery</div></div>
+        <div class="hero-stat"><div class="hero-stat-val">2</div><div class="hero-stat-label">Countries Covered</div></div>
+      </div>
+    </div>
+    <!-- Features strip -->
+    <div style="background:#f8fafc;padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px">
+        <div style="font-size:18px;margin-bottom:6px">⚡</div>
+        <div style="font-size:11px;font-weight:700;color:#0f172a">Instant Matching</div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:3px">Find carriers in under 5 minutes</div>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px">
+        <div style="font-size:18px;margin-bottom:6px">📍</div>
+        <div style="font-size:11px;font-weight:700;color:#0f172a">Live GPS Tracking</div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:3px">Know where your cargo is always</div>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px">
+        <div style="font-size:18px;margin-bottom:6px">🛡️</div>
+        <div style="font-size:11px;font-weight:700;color:#0f172a">Verified Carriers</div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:3px">Every carrier vetted &amp; insured</div>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px">
+        <div style="font-size:18px;margin-bottom:6px">💵</div>
+        <div style="font-size:11px;font-weight:700;color:#0f172a">Secure Payments</div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:3px">USD &amp; ZAR, bank-grade security</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 2. LOGIN PAGE -->
+<!-- ══════════════════════════════════════════ -->
+<div>
+  <div class="screen-label">② Login — Choose Your Role</div>
+  <div class="screen">
+    <div class="login-wrap">
+      <div class="login-top">
+        <div class="logo" style="margin-bottom:16px">
+          <div class="logo-icon">🚛</div>
+          <div class="logo-text">Sumiko</div>
+        </div>
+        <div style="color:#fff;font-size:18px;font-weight:900;line-height:1.2">Move Freight.<br><span style="background:linear-gradient(135deg,#f97316,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Smarter.</span></div>
+        <div style="color:#64748b;font-size:11px;margin-top:6px">Zimbabwe &amp; South Africa's most trusted digital freight platform.</div>
+      </div>
+      <div class="login-body">
+        <div style="font-size:16px;font-weight:900;color:#0f172a;margin-bottom:4px">Welcome back</div>
+        <div style="font-size:11px;color:#94a3b8;margin-bottom:16px">This is a live demo. Select your role to explore.</div>
+
+        <div class="role-card role-card-active">
+          <div class="role-icon-wrap" style="background:#fff7ed">📦</div>
+          <div style="flex:1">
+            <div class="role-title">Shipper</div>
+            <div class="role-desc">I need to move cargo</div>
+            <div class="role-demo">Demo: Tendai Moyo · Moyo Trading Ltd</div>
+          </div>
+          <div class="role-arrow">→</div>
+        </div>
+
+        <div class="role-card">
+          <div class="role-icon-wrap" style="background:#eff6ff">🚛</div>
+          <div style="flex:1">
+            <div class="role-title">Carrier / Driver</div>
+            <div class="role-desc">I move freight for others</div>
+            <div class="role-demo">Demo: Chisomo Banda · Banda Transport</div>
+          </div>
+          <div class="role-arrow" style="color:#3b82f6">→</div>
+        </div>
+
+        <div class="role-card">
+          <div class="role-icon-wrap" style="background:#f0fdf4">👥</div>
+          <div style="flex:1">
+            <div class="role-title">Fleet Manager</div>
+            <div class="role-desc">I manage trucks and drivers</div>
+            <div class="role-demo">Demo: Sibongile Dube · Dube Transport</div>
+          </div>
+          <div class="role-arrow" style="color:#16a34a">→</div>
+        </div>
+
+        <div class="role-card">
+          <div class="role-icon-wrap" style="background:#faf5ff">📊</div>
+          <div style="flex:1">
+            <div class="role-title">Admin</div>
+            <div class="role-desc">Platform administration</div>
+            <div class="role-demo">Demo: Rudo Matsika · Sumiko</div>
+          </div>
+          <div class="role-arrow" style="color:#9333ea">→</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 3. SHIPPER DASHBOARD -->
+<!-- ══════════════════════════════════════════ -->
+<div>
+  <div class="screen-label">③ Shipper Dashboard</div>
+  <div class="screen">
+    <div class="dash-wrap" style="min-height:580px">
+      <div class="sidebar">
+        <div class="sb-logo">🚛</div>
+        <div class="sb-item sb-active">🏠</div>
+        <div class="sb-item">➕</div>
+        <div class="sb-item">📦</div>
+        <div class="sb-item">📍</div>
+        <div class="sb-item">📄</div>
+        <div class="sb-role">SHIPPER</div>
+        <div class="sb-item" style="margin-bottom:8px">⚙️</div>
+      </div>
+      <div class="main-area">
+        <div class="topbar">
+          <div class="topbar-search">🔍 Search loads, carriers...</div>
+          <div class="topbar-right">
+            <div class="notif">🔔<div class="notif-dot"></div></div>
+            <div class="avatar">TM</div>
+          </div>
+        </div>
+        <div class="page-content">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+            <div>
+              <div style="font-size:16px;font-weight:900;color:#0f172a">Good morning, Tendai 👋</div>
+              <div style="font-size:10px;color:#94a3b8;margin-top:2px">Monday, 10 June 2024</div>
+            </div>
+            <div class="btn-orange" style="font-size:11px;padding:7px 12px;border-radius:9px;border:none">+ Post a Load</div>
+          </div>
+
+          <!-- Stats row -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+            <div class="stat-card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div>
+                  <div class="stat-label">Active Shipments</div>
+                  <div class="stat-value">2</div>
+                  <div class="stat-sub">In transit or assigned</div>
+                  <div class="stat-trend trend-up">↑ 2 more</div>
+                </div>
+                <div class="stat-icon icon-orange">🚛</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div>
+                  <div class="stat-label">Open Loads</div>
+                  <div class="stat-value">1</div>
+                  <div class="stat-sub">Awaiting carrier</div>
+                </div>
+                <div class="stat-icon icon-blue">📦</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div>
+                  <div class="stat-label">Total Spend (Jun)</div>
+                  <div class="stat-value">$16.8k</div>
+                  <div class="stat-sub">USD this month</div>
+                  <div class="stat-trend trend-up">↑ +19%</div>
+                </div>
+                <div class="stat-icon icon-green">📈</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div>
+                  <div class="stat-label">Avg. Delivery</div>
+                  <div class="stat-value">2.4d</div>
+                  <div class="stat-sub">Harare → Joburg</div>
+                  <div class="stat-trend trend-up">↑ faster</div>
+                </div>
+                <div class="stat-icon icon-purple">⏱</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Spend chart -->
+          <div class="card" style="margin-bottom:10px">
+            <div class="card-title">Freight Spend</div>
+            <div class="card-sub">Monthly USD spend, last 6 months</div>
+            <div class="bar-chart">
+              <div class="bar-col"><div class="bar" style="height:52%"></div><div class="bar-label">Jan</div></div>
+              <div class="bar-col"><div class="bar" style="height:41%"></div><div class="bar-label">Feb</div></div>
+              <div class="bar-col"><div class="bar" style="height:64%"></div><div class="bar-label">Mar</div></div>
+              <div class="bar-col"><div class="bar" style="height:78%"></div><div class="bar-label">Apr</div></div>
+              <div class="bar-col"><div class="bar" style="height:59%"></div><div class="bar-label">May</div></div>
+              <div class="bar-col"><div class="bar" style="height:71%"></div><div class="bar-label">Jun</div></div>
+            </div>
+          </div>
+
+          <!-- Active shipment -->
+          <div class="card">
+            <div class="card-title">Active Shipments</div>
+            <div class="card-sub">Live updates</div>
+            <div class="load-card load-card-active">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                <span style="font-size:10px;font-weight:700;color:#f97316">L-2024-001</span>
+                <span class="badge badge-transit"><span class="badge-dot"></span>In Transit</span>
+              </div>
+              <div class="route">Harare <span class="route-arrow">→</span> Johannesburg</div>
+              <div style="font-size:10px;color:#94a3b8;margin-top:3px">Consumer Goods · 18T · $2,400</div>
+              <div style="margin-top:8px">
+                <div style="display:flex;justify-content:space-between;font-size:9px;color:#94a3b8;margin-bottom:4px"><span>Harare</span><span>62%</span><span>Joburg</span></div>
+                <div class="progress-wrap"><div class="progress-fill" style="width:62%"></div></div>
+                <div style="font-size:9px;color:#94a3b8;margin-top:3px">Est. delivery: 2024-06-12</div>
+              </div>
+            </div>
+            <div class="load-card">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                <span style="font-size:10px;font-weight:700;color:#f97316">L-2024-004</span>
+                <span class="badge badge-assigned"><span class="badge-dot"></span>Assigned</span>
+              </div>
+              <div class="route">Gweru <span class="route-arrow">→</span> Johannesburg</div>
+              <div style="font-size:10px;color:#94a3b8;margin-top:3px">Agricultural · 20T · $2,800</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 4. POST A LOAD (Step 1) -->
+<!-- ══════════════════════════════════════════ -->
+<div>
+  <div class="screen-label">④ Post a Load — 4-Step Form</div>
+  <div class="screen">
+    <div class="dash-wrap" style="min-height:480px">
+      <div class="sidebar">
+        <div class="sb-logo">🚛</div>
+        <div class="sb-item">🏠</div>
+        <div class="sb-item sb-active">➕</div>
+        <div class="sb-item">📦</div>
+        <div class="sb-item">📍</div>
+        <div class="sb-role">SHIPPER</div>
+      </div>
+      <div class="main-area">
+        <div class="topbar">
+          <div style="font-size:13px;font-weight:700;color:#0f172a">Post a Load</div>
+          <div class="avatar">TM</div>
+        </div>
+        <div class="page-content">
+          <div class="step-wrap">
+            <div class="step step-active">📍 Route</div>
+            <div class="step-arrow">›</div>
+            <div class="step step-pending">📦 Cargo</div>
+            <div class="step-arrow">›</div>
+            <div class="step step-pending">📅 Schedule</div>
+            <div class="step-arrow">›</div>
+            <div class="step step-pending">✓ Confirm</div>
+          </div>
+          <div class="card">
+            <div style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:14px">Origin &amp; Destination</div>
+            <div class="form-row">
+              <div class="form-group" style="margin-bottom:0">
+                <div class="form-label">Origin City *</div>
+                <select class="form-select"><option>Harare, Zimbabwe</option></select>
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <div class="form-label">Destination City *</div>
+                <select class="form-select"><option>Johannesburg, SA</option></select>
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:10px">
+              <div class="form-label">Pickup Address *</div>
+              <input class="form-input" placeholder="14 Samora Machel Ave, Industrial Zone" value="14 Samora Machel Ave"/>
+            </div>
+            <div class="form-group">
+              <div class="form-label">Delivery Address *</div>
+              <input class="form-input" placeholder="32 Commissioner St, Johannesburg CBD" value="32 Commissioner St, CBD"/>
+            </div>
+            <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px;margin-bottom:14px;display:flex;gap:8px;align-items:flex-start">
+              <span>📍</span>
+              <div>
+                <div style="font-size:11px;font-weight:700;color:#1e40af">Harare → Johannesburg</div>
+                <div style="font-size:10px;color:#3b82f6;margin-top:2px">Distance calculated automatically</div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end">
+              <div class="btn-orange" style="border:none;padding:9px 18px;border-radius:9px;font-size:11px;font-weight:700">Next Step →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 5. MY LOADS TABLE -->
+<!-- ══════════════════════════════════════════ -->
+<div>
+  <div class="screen-label">⑤ My Loads — Filtered Table</div>
+  <div class="screen">
+    <div class="dash-wrap" style="min-height:520px">
+      <div class="sidebar">
+        <div class="sb-logo">🚛</div>
+        <div class="sb-item">🏠</div>
+        <div class="sb-item">➕</div>
+        <div class="sb-item sb-active">📦</div>
+        <div class="sb-item">📍</div>
+        <div class="sb-role">SHIPPER</div>
+      </div>
+      <div class="main-area">
+        <div class="topbar">
+          <div style="font-size:13px;font-weight:700;color:#0f172a">My Loads</div>
+          <div class="btn-orange" style="border:none;padding:6px 12px;border-radius:8px;font-size:10px;font-weight:700">+ Post a Load</div>
+        </div>
+        <div class="page-content">
+          <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+            <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:700;color:#c2410c">Open: 1</div>
+            <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:700;color:#c2410c">In Transit: 2</div>
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:700;color:#15803d">Delivered: 2</div>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:10px;overflow-x:auto">
+            <div style="background:#f97316;color:#fff;border-radius:8px;padding:5px 12px;font-size:10px;font-weight:700;white-space:nowrap">All Loads</div>
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:5px 12px;font-size:10px;font-weight:600;color:#64748b;white-space:nowrap">Open</div>
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:5px 12px;font-size:10px;font-weight:600;color:#64748b;white-space:nowrap">In Transit</div>
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:5px 12px;font-size:10px;font-weight:600;color:#64748b;white-space:nowrap">Delivered</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="th">Load ID</th>
+                  <th class="th">Route</th>
+                  <th class="th">Amount</th>
+                  <th class="th">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="td td-orange">L-2024-001</td>
+                  <td class="td"><div class="route" style="font-size:10px">HRE <span class="route-arrow">→</span> JHB</div><div class="td-sub">892 km</div></td>
+                  <td class="td td-bold">$2,400</td>
+                  <td class="td"><span class="badge badge-transit"><span class="badge-dot"></span>In Transit</span></td>
+                </tr>
+                <tr>
+                  <td class="td td-orange">L-2024-002</td>
+                  <td class="td"><div class="route" style="font-size:10px">BYO <span class="route-arrow">→</span> CPT</div><div class="td-sub">2,240 km</div></td>
+                  <td class="td td-bold">$3,800</td>
+                  <td class="td"><span class="badge badge-delivered"><span class="badge-dot"></span>Delivered</span></td>
+                </tr>
+                <tr>
+                  <td class="td td-orange">L-2024-003</td>
+                  <td class="td"><div class="route" style="font-size:10px">MUT <span class="route-arrow">→</span> DBN</div><div class="td-sub">1,420 km</div></td>
+                  <td class="td td-bold">$4,200</td>
+                  <td class="td"><span class="badge badge-posted"><span class="badge-dot"></span>Open</span></td>
+                </tr>
+                <tr>
+                  <td class="td td-orange">L-2024-006</td>
+                  <td class="td"><div class="route" style="font-size:10px">HRE <span class="route-arrow">→</span> PTA</div><div class="td-sub">1,020 km</div></td>
+                  <td class="td td-bold">$3,200</td>
+                  <td class="td"><span class="badge badge-delivered"><span class="badge-dot"></span>Delivered</span></td>
+                </tr>
+                <tr>
+                  <td class="td td-orange">L-2024-008</td>
+                  <td class="td"><div class="route" style="font-size:10px">HRE <span class="route-arrow">→</span> CPT</div><div class="td-sub">2,850 km</div></td>
+                  <td class="td td-bold">$2,600</td>
+                  <td class="td"><span class="badge badge-cancelled"><span class="badge-dot"></span>Cancelled</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 6. LIVE TRACKING -->
+<!-- ══════════════════════════════════════════ -->
+<div>
+  <div class="screen-label">⑥ Live Tracking</div>
+  <div class="screen">
+    <div class="dash-wrap" style="min-height:520px">
+      <div class="sidebar">
+        <div class="sb-logo">🚛</div>
+        <div class="sb-item">🏠</div>
+        <div class="sb-item">➕</div>
+        <div class="sb-item">📦</div>
+        <div class="sb-item sb-active">📍</div>
+        <div class="sb-role">SHIPPER</div>
+      </div>
+      <div class="main-area">
+        <div class="topbar"><div style="font-size:13px;font-weight:700;color:#0f172a">Live Tracking</div><div class="avatar">TM</div></div>
+        <div class="page-content">
+          <!-- Map area -->
+          <div class="track-map">
+            <div style="width:100%">
+              <div class="track-route">
+                <div style="text-align:center">
+                  <div class="track-dot-green"></div>
+                  <div class="track-city">Harare</div>
+                </div>
+                <div class="track-line">
+                  <div class="track-truck">🚛</div>
+                </div>
+                <div style="text-align:center">
+                  <div class="track-dot-grey"></div>
+                  <div class="track-city">Joburg</div>
+                </div>
+              </div>
+              <div style="text-align:center;margin-top:12px">
+                <div style="background:#fff;border-radius:8px;display:inline-block;padding:5px 12px;font-size:10px;font-weight:600;color:#374151;box-shadow:0 2px 8px rgba(0,0,0,0.1)">📍 892 km total route</div>
+              </div>
+            </div>
+          </div>
+          <!-- Load info strip -->
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+            <div><div style="font-size:9px;color:#94a3b8">Load ID</div><div style="font-size:11px;font-weight:700;color:#f97316;margin-top:2px">L-2024-001</div></div>
+            <div><div style="font-size:9px;color:#94a3b8">Carrier</div><div style="font-size:11px;font-weight:600;color:#0f172a;margin-top:2px">C. Banda</div></div>
+            <div><div style="font-size:9px;color:#94a3b8">ETA</div><div style="font-size:11px;font-weight:600;color:#0f172a;margin-top:2px">Jun 12</div></div>
+          </div>
+          <!-- Timeline -->
+          <div class="card">
+            <div class="card-title" style="margin-bottom:12px">Tracking Timeline</div>
+            <div class="timeline-item"><div><div class="tl-dot tl-done">✓</div></div><div><div class="tl-text">Picked up from Harare Industrial</div><div class="tl-sub">09:41 AM · Harare, ZW</div></div></div>
+            <div class="timeline-item"><div><div class="tl-dot tl-done">✓</div></div><div><div class="tl-text">Checkpoint — Beitbridge Border</div><div class="tl-sub">03:15 PM · Beitbridge, ZW</div></div></div>
+            <div class="timeline-item"><div><div class="tl-dot tl-done">✓</div></div><div><div class="tl-text">Customs clearance complete</div><div class="tl-sub">05:30 PM · Musina, SA</div></div></div>
+            <div class="timeline-item"><div><div class="tl-dot tl-active">●</div></div><div><div class="tl-text" style="color:#f97316;font-weight:700">En route to Johannesburg</div><div class="tl-sub">In progress · Musina, SA</div></div></div>
+            <div class="timeline-item"><div><div class="tl-dot tl-pending"></div></div><div><div class="tl-text" style="color:#94a3b8">Expected delivery</div><div class="tl-sub">Tomorrow · Johannesburg, Gauteng</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 7. CARRIER DASHBOARD -->
+<!-- ══════════════════════════════════════════ -->
+<div>
+  <div class="screen-label">⑦ Carrier Dashboard</div>
+  <div class="screen">
+    <div class="dash-wrap" style="min-height:580px">
+      <div class="sidebar">
+        <div class="sb-logo">🚛</div>
+        <div class="sb-item sb-active">🏠</div>
+        <div class="sb-item">🔍</div>
+        <div class="sb-item">💼</div>
+        <div class="sb-item">💵</div>
+        <div class="sb-role">CARRIER</div>
+        <div class="sb-item" style="margin-bottom:8px">⚙️</div>
+      </div>
+      <div class="main-area">
+        <div class="topbar">
+          <div style="font-size:13px;font-weight:700;color:#0f172a">Welcome back, Chisomo</div>
+          <div class="avatar">CB</div>
+        </div>
+        <div class="page-content">
+          <div style="font-size:11px;color:#94a3b8;margin-bottom:12px">4 loads available near you</div>
+          <!-- Stats -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+            <div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="stat-label">Active Jobs</div><div class="stat-value">2</div><div class="stat-sub">On road now</div></div><div class="stat-icon icon-orange">💼</div></div></div>
+            <div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="stat-label">This Week</div><div class="stat-value">$3,200</div><div class="stat-trend trend-up">↑ +14%</div></div><div class="stat-icon icon-green">💵</div></div></div>
+            <div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="stat-label">Rating</div><div class="stat-value">4.9 ★</div><div class="stat-sub">312 trips</div></div><div class="stat-icon icon-orange">⭐</div></div></div>
+            <div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="stat-label">Total (8W)</div><div class="stat-value">$20.3k</div><div class="stat-trend trend-up">↑ +22%</div></div><div class="stat-icon icon-blue">📈</div></div></div>
+          </div>
+          <!-- Earnings chart -->
+          <div class="card" style="margin-bottom:10px">
+            <div class="card-title">Weekly Earnings</div>
+            <div class="card-sub">USD per week, last 8 weeks</div>
+            <div class="bar-chart">
+              <div class="bar-col"><div class="bar bar-green" style="height:50%"></div><div class="bar-label">W1</div></div>
+              <div class="bar-col"><div class="bar bar-green" style="height:67%"></div><div class="bar-label">W2</div></div>
+              <div class="bar-col"><div class="bar bar-green" style="height:44%"></div><div class="bar-label">W3</div></div>
+              <div class="bar-col"><div class="bar bar-green" style="height:81%"></div><div class="bar-label">W4</div></div>
+              <div class="bar-col"><div class="bar bar-green" style="height:58%"></div><div class="bar-label">W5</div></div>
+              <div class="bar-col"><div class="bar bar-green" style="height:89%"></div><div class="bar-label">W6</div></div>
+              <div class="bar-col"><div class="bar bar-green" style="height:78%"></div><div class="bar-label">W7</div></div>
+              <div class="bar-col"><div class="bar bar-green" style="height:100%"></div><div class="bar-label">W8</div></div>
+            </div>
+          </div>
+          <!-- Available loads -->
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+              <div class="card-title">Loads Near You</div>
+              <div style="font-size:10px;color:#f97316;font-weight:600">View all →</div>
+            </div>
+            <div class="avail-card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div>
+                  <div style="font-size:9px;font-weight:700;color:#f97316;margin-bottom:4px">L-2024-010 · Agricultural</div>
+                  <div class="route" style="font-size:12px">Masvingo <span class="route-arrow">→</span> Beitbridge</div>
+                  <div style="font-size:10px;color:#94a3b8;margin-top:3px">22T · 290 km · 20-Ton Flatbed · Jun 14</div>
+                </div>
+                <div style="text-align:right">
+                  <div class="avail-price">$1,600</div>
+                  <div class="accept-btn" style="margin-top:6px">Accept</div>
+                </div>
+              </div>
+            </div>
+            <div class="avail-card" style="border-color:#e2e8f0;background:#fff">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div>
+                  <div style="font-size:9px;font-weight:700;color:#f97316;margin-bottom:4px">L-2024-011 · Consumer Goods</div>
+                  <div class="route" style="font-size:12px">Harare <span class="route-arrow">→</span> Johannesburg</div>
+                  <div style="font-size:10px;color:#94a3b8;margin-top:3px">16T · 892 km · 16-Ton Closed · Jun 15</div>
+                </div>
+                <div style="text-align:right">
+                  <div class="avail-price">$2,200</div>
+                  <div class="accept-btn" style="margin-top:6px">Accept</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 8. FLEET MANAGER DASHBOARD -->
+<!-- ══════════════════════════════════════════ -->
+<div>
+  <div class="screen-label">⑧ Fleet Manager Dashboard</div>
+  <div class="screen">
+    <div class="dash-wrap" style="min-height:580px">
+      <div class="sidebar">
+        <div class="sb-logo">🚛</div>
+        <div class="sb-item sb-active">🏠</div>
+        <div class="sb-item">🚛</div>
+        <div class="sb-item">👥</div>
+        <div class="sb-item">📈</div>
+        <div class="sb-role">FLEET</div>
+        <div class="sb-item" style="margin-bottom:8px">⚙️</div>
+      </div>
+      <div class="main-area">
+        <div class="topbar"><div style="font-size:13px;font-weight:700;color:#0f172a">Fleet Dashboard</div><div class="avatar">SD</div></div>
+        <div class="page-content">
+          <div style="font-size:11px;color:#94a3b8;margin-bottom:12px">Dube Transport (Pvt) Ltd · 8 trucks · 6 drivers</div>
+          <!-- Stats -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+            <div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="stat-label">Total Trucks</div><div class="stat-value">8</div><div class="stat-sub">38% utilization</div></div><div class="stat-icon icon-orange">🚛</div></div></div>
+            <div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="stat-label">On Road Now</div><div class="stat-value">3</div><div class="stat-trend trend-up">↑ Active</div></div><div class="stat-icon icon-green">📈</div></div></div>
+            <div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="stat-label">Maintenance</div><div class="stat-value">1</div><div class="stat-sub">Needs attention</div></div><div class="stat-icon" style="background:#fffbeb">⚠️</div></div></div>
+            <div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="stat-label">Active Drivers</div><div class="stat-value">5</div><div class="stat-sub">of 6 total</div></div><div class="stat-icon icon-blue">👥</div></div></div>
+          </div>
+          <!-- Truck status grid -->
+          <div class="truck-status-grid">
+            <div class="ts-card ts-on"><div class="ts-count">3</div><div class="ts-label">On Job</div></div>
+            <div class="ts-card ts-avail"><div class="ts-count">3</div><div class="ts-label">Available</div></div>
+            <div class="ts-card ts-maint"><div class="ts-count">1</div><div class="ts-label">Maintenance</div></div>
+            <div class="ts-card ts-off"><div class="ts-count">1</div><div class="ts-label">Offline</div></div>
+          </div>
+          <!-- Truck list -->
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+              <div class="card-title">Fleet Overview</div>
+              <div style="font-size:10px;color:#f97316;font-weight:600">Manage →</div>
+            </div>
+            <div class="truck-card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+                <div style="font-size:12px;font-weight:700;color:#0f172a">ABD 2341 ZW</div>
+                <span class="badge badge-transit"><span class="badge-dot"></span>On Job</span>
+              </div>
+              <div style="font-size:10px;color:#94a3b8">2021 Mercedes Actros · 30T · Chisomo Banda</div>
+              <div style="font-size:10px;color:#94a3b8;margin-top:2px">📍 Beitbridge, Zimbabwe</div>
+            </div>
+            <div class="truck-card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+                <div style="font-size:12px;font-weight:700;color:#0f172a">GHT 8821 ZW</div>
+                <span class="badge badge-delivered"><span class="badge-dot"></span>Available</span>
+              </div>
+              <div style="font-size:10px;color:#94a3b8">2022 MAN TGX · 34T · No driver</div>
+              <div style="font-size:10px;color:#94a3b8;margin-top:2px">📍 Bulawayo, Zimbabwe</div>
+            </div>
+            <div class="truck-card truck-card-maintenance">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+                <div style="font-size:12px;font-weight:700;color:#0f172a">RST 7761 ZW</div>
+                <span class="badge badge-posted"><span class="badge-dot"></span>Maintenance</span>
+              </div>
+              <div style="font-size:10px;color:#94a3b8">2019 Mercedes Actros · 34T · 312,000 km</div>
+              <div style="font-size:10px;color:#d97706;margin-top:2px">🔧 Currently in service</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 9. ADMIN DASHBOARD -->
+<!-- ══════════════════════════════════════════ -->
+<div>
+  <div class="screen-label">⑨ Admin Dashboard</div>
+  <div class="screen">
+    <div class="dash-wrap" style="min-height:620px">
+      <div class="sidebar">
+        <div class="sb-logo">🚛</div>
+        <div class="sb-item sb-active">🏠</div>
+        <div class="sb-item">📦</div>
+        <div class="sb-item">👥</div>
+        <div class="sb-item">📊</div>
+        <div class="sb-item">💳</div>
+        <div class="sb-role">ADMIN</div>
+        <div class="sb-item" style="margin-bottom:8px">⚙️</div>
+      </div>
+      <div class="main-area">
+        <div class="topbar">
+          <div style="font-size:13px;font-weight:700;color:#0f172a">Platform Overview</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:600;color:#16a34a">● Online</div>
+            <div class="avatar">RM</div>
+          </div>
+        </div>
+        <div class="page-content">
+          <!-- Stats -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+            <div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="stat-label">Loads (Jun)</div><div class="stat-value">248</div><div class="stat-trend trend-up">↑ +13%</div></div><div class="stat-icon icon-orange">📦</div></div></div>
+            <div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="stat-label">Revenue</div><div class="stat-value">$61k</div><div class="stat-trend trend-up">↑ +13%</div></div><div class="stat-icon icon-green">💵</div></div></div>
+            <div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="stat-label">Registered Users</div><div class="stat-value">10</div><div class="stat-trend trend-up">↑ +3 this week</div></div><div class="stat-icon icon-blue">👥</div></div></div>
+            <div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="stat-label">Active Loads</div><div class="stat-value">5</div><div class="stat-sub">Posted + transit</div></div><div class="stat-icon icon-purple">📈</div></div></div>
+          </div>
+          <!-- Revenue chart -->
+          <div class="card" style="margin-bottom:10px">
+            <div class="card-title">Platform Revenue</div>
+            <div class="card-sub">Monthly USD, last 12 months</div>
+            <div class="bar-chart">
+              <div class="bar-col"><div class="bar" style="height:46%"></div><div class="bar-label">Jul</div></div>
+              <div class="bar-col"><div class="bar" style="height:56%"></div><div class="bar-label">Aug</div></div>
+              <div class="bar-col"><div class="bar" style="height:52%"></div><div class="bar-label">Sep</div></div>
+              <div class="bar-col"><div class="bar" style="height:69%"></div><div class="bar-label">Oct</div></div>
+              <div class="bar-col"><div class="bar" style="height:64%"></div><div class="bar-label">Nov</div></div>
+              <div class="bar-col"><div class="bar" style="height:78%"></div><div class="bar-label">Dec</div></div>
+              <div class="bar-col"><div class="bar" style="height:73%"></div><div class="bar-label">Jan</div></div>
+              <div class="bar-col"><div class="bar" style="height:63%"></div><div class="bar-label">Feb</div></div>
+              <div class="bar-col"><div class="bar" style="height:85%"></div><div class="bar-label">Mar</div></div>
+              <div class="bar-col"><div class="bar" style="height:95%"></div><div class="bar-label">Apr</div></div>
+              <div class="bar-col"><div class="bar" style="height:89%"></div><div class="bar-label">May</div></div>
+              <div class="bar-col"><div class="bar" style="height:100%"></div><div class="bar-label">Jun</div></div>
+            </div>
+          </div>
+          <!-- Activity + routes -->
+          <div class="card" style="margin-bottom:10px">
+            <div class="card-title" style="margin-bottom:10px">Live Activity</div>
+            <div class="activity-item"><div class="act-icon act-success">✓</div><div><div class="act-text">L-2024-002 delivered — Bulawayo → Cape Town</div><div class="act-time">2 min ago</div></div></div>
+            <div class="activity-item"><div class="act-icon act-info">📦</div><div><div class="act-text">New load posted by Ndlovu Manufacturing</div><div class="act-time">15 min ago</div></div></div>
+            <div class="activity-item"><div class="act-icon act-info">👤</div><div><div class="act-text">New carrier verified: Sipho Mokoena, Joburg</div><div class="act-time">1 hour ago</div></div></div>
+            <div class="activity-item" style="border-bottom:none"><div class="act-icon act-warning">⚠</div><div><div class="act-text">Load L-2024-008 cancelled by shipper</div><div class="act-time">2 hours ago</div></div></div>
+          </div>
+          <!-- Top routes -->
+          <div class="card">
+            <div class="card-title" style="margin-bottom:12px">Top Routes</div>
+            <div class="route-bar-row">
+              <div class="route-bar-label"><span class="route-bar-name">Harare → Johannesburg</span><span class="route-bar-trend trend-pos">+12%</span></div>
+              <div class="route-bar-track"><div class="route-bar-fill" style="width:100%"></div></div>
+              <div class="route-bar-meta"><span>248 loads</span><span>$594,400</span></div>
+            </div>
+            <div class="route-bar-row">
+              <div class="route-bar-label"><span class="route-bar-name">Bulawayo → Johannesburg</span><span class="route-bar-trend trend-pos">+8%</span></div>
+              <div class="route-bar-track"><div class="route-bar-fill" style="width:75%"></div></div>
+              <div class="route-bar-meta"><span>187 loads</span><span>$448,800</span></div>
+            </div>
+            <div class="route-bar-row">
+              <div class="route-bar-label"><span class="route-bar-name">Harare → Durban</span><span class="route-bar-trend trend-pos">+15%</span></div>
+              <div class="route-bar-track"><div class="route-bar-fill" style="width:54%"></div></div>
+              <div class="route-bar-meta"><span>134 loads</span><span>$455,600</span></div>
+            </div>
+            <div class="route-bar-row">
+              <div class="route-bar-label"><span class="route-bar-name">Bulawayo → Cape Town</span><span class="route-bar-trend trend-neg">-3%</span></div>
+              <div class="route-bar-track"><div class="route-bar-fill" style="width:29%"></div></div>
+              <div class="route-bar-meta"><span>72 loads</span><span>$273,600</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 10. ADMIN USERS -->
+<!-- ══════════════════════════════════════════ -->
+<div>
+  <div class="screen-label">⑩ Admin — User Management</div>
+  <div class="screen">
+    <div class="dash-wrap" style="min-height:480px">
+      <div class="sidebar">
+        <div class="sb-logo">🚛</div>
+        <div class="sb-item">🏠</div>
+        <div class="sb-item">📦</div>
+        <div class="sb-item sb-active">👥</div>
+        <div class="sb-item">📊</div>
+        <div class="sb-role">ADMIN</div>
+      </div>
+      <div class="main-area">
+        <div class="topbar"><div style="font-size:13px;font-weight:700;color:#0f172a">Users</div><div style="font-size:10px;background:#f1f5f9;color:#64748b;border-radius:8px;padding:4px 10px;font-weight:600">10 registered</div></div>
+        <div class="page-content">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
+            <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:10px"><div style="font-size:18px;font-weight:900;color:#c2410c">5</div><div style="font-size:9px;font-weight:700;color:#ea580c;text-transform:uppercase">Shippers</div></div>
+            <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px"><div style="font-size:18px;font-weight:900;color:#1d4ed8">4</div><div style="font-size:9px;font-weight:700;color:#3b82f6;text-transform:uppercase">Carriers</div></div>
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px"><div style="font-size:18px;font-weight:900;color:#15803d">1</div><div style="font-size:9px;font-weight:700;color:#16a34a;text-transform:uppercase">Fleet Mgrs</div></div>
+            <div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:10px;padding:10px"><div style="font-size:18px;font-weight:900;color:#7e22ce">2</div><div style="font-size:9px;font-weight:700;color:#9333ea;text-transform:uppercase">Unverified</div></div>
+          </div>
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden">
+            <div class="user-row" style="padding:10px 12px;border-bottom:1px solid #f1f5f9"><div class="user-avatar">TM</div><div style="flex:1"><div class="user-name">Tendai Moyo</div><div class="user-email">tendai@moyotrading.co.zw · Moyo Trading Ltd</div></div><span class="badge badge-transit" style="font-size:9px;padding:2px 7px">Shipper</span>&nbsp;<div class="verified">✓ Verified</div></div>
+            <div class="user-row" style="padding:10px 12px;border-bottom:1px solid #f1f5f9"><div class="user-avatar" style="background:#3b82f6">CB</div><div style="flex:1"><div class="user-name">Chisomo Banda</div><div class="user-email">chisomo@bandatransport.co.zw</div></div><span class="badge badge-assigned" style="font-size:9px;padding:2px 7px">Carrier</span>&nbsp;<div class="verified">✓ Verified</div></div>
+            <div class="user-row" style="padding:10px 12px;border-bottom:1px solid #f1f5f9"><div class="user-avatar" style="background:#16a34a">SD</div><div style="flex:1"><div class="user-name">Sibongile Dube</div><div class="user-email">sibongile@dubetransport.co.zw</div></div><span class="badge badge-delivered" style="font-size:9px;padding:2px 7px">Fleet Mgr</span>&nbsp;<div class="verified">✓ Verified</div></div>
+            <div class="user-row" style="padding:10px 12px;border-bottom:1px solid #f1f5f9"><div class="user-avatar" style="background:#94a3b8">MZ</div><div style="flex:1"><div class="user-name">Munyaradzi Zvobgo</div><div class="user-email">munya@gzfarms.co.zw · Great Zimbabwe Farms</div></div><span class="badge badge-transit" style="font-size:9px;padding:2px 7px">Shipper</span>&nbsp;<div class="pending-v">⏳ Pending</div></div>
+            <div class="user-row" style="padding:10px 12px;border-bottom:none"><div class="user-avatar" style="background:#3b82f6">TN</div><div style="flex:1"><div class="user-name">Thabo Nkosi</div><div class="user-email">thabo.nkosi@gmail.com · Johannesburg, SA</div></div><span class="badge badge-assigned" style="font-size:9px;padding:2px 7px">Carrier</span>&nbsp;<div class="verified">✓ Verified</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end .screens -->
+
+<!-- Download note -->
+<div style="text-align:center;margin:40px 0 20px;color:#475569;font-size:12px;line-height:1.8">
+  <div style="color:#f97316;font-size:14px;font-weight:700;margin-bottom:6px">Sumiko · Built with React + TypeScript</div>
+  This is a visual preview of every screen in the app.<br>
+  The real app has full navigation, charts, and interactive data.
+</div>
+
+</body>
+</html>
